@@ -1,0 +1,94 @@
+#!/bin/bash
+
+set -eu
+
+this_dir="$(dirname "$0")"
+
+PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+
+apt-get update
+
+###
+
+apt-get install -y                                                          \
+    build-essential bzip2 unzip tree realpath net-tools                     \
+    software-properties-common apt-transport-https
+
+{
+    echo 'debconf shared/accepted-oracle-license-v1-1 select true'
+    echo 'debconf shared/accepted-oracle-license-v1-1 seen true'
+} | debconf-set-selections
+
+apt-add-repository ppa:webupd8team/java
+apt-get update
+apt-get install -y oracle-java8-installer
+
+###
+
+echo 'deb https://dl.bintray.com/sbt/debian /' > /etc/apt/sources.list.d/sbt.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+apt-get update
+apt-get install -y sbt
+
+###
+
+cat <<'^Z' > /etc/apt/sources.list.d/dotnetdev.list
+deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main
+^Z
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
+apt-get update
+apt-get install -y dotnet-dev-1.0.4
+
+###
+
+cd
+mkdir t t/project
+cd t
+cat <<'^Z' > App.scala
+object App {
+  def main(args: Array[String]): Unit = {
+    println("Hello, world!")
+  }
+}
+^Z
+cat <<'^Z' > build.sbt
+lazy val a = project in file(".")
+scalaVersion := "2.11.11"
+^Z
+cat <<'^Z' > project/build.properties
+sbt.version=0.13.15
+^Z
+while ! yes q | sbt update; do
+    :
+done
+while ! yes q | sbt compile; do
+    :
+done
+
+cd
+rm -rf t
+mkdir t t/project
+cd t
+cat <<'^Z' > App.scala
+object App {
+  def main(args: Array[String]): Unit = {
+    println("Hello, world!")
+  }
+}
+^Z
+cat <<'^Z' > build.sbt
+lazy val a = project in file(".")
+scalaVersion := "2.12.2"
+^Z
+cat <<'^Z' > project/build.properties
+sbt.version=0.13.15
+^Z
+while ! yes q | sbt update; do
+    :
+done
+while ! yes q | sbt compile; do
+    :
+done
+cd
+rm -rf t
+

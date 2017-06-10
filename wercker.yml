@@ -1,0 +1,12 @@
+---
+box: ubuntu:xenial
+
+deploy:
+   steps:
+    - script:
+         code: ./initialize
+    - internal/docker-push:
+         username: $USERNAME
+         password: $PASSWORD
+         repository: norioxkimura/developer-playground-noinit
+
