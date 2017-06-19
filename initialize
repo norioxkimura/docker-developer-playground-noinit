@@ -8,11 +8,13 @@ PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/u
 
 apt-get update
 
-###
+### essentials
 
 apt-get install -y                                                          \
     build-essential bzip2 unzip tree realpath net-tools                     \
     software-properties-common apt-transport-https
+
+### Java
 
 {
     echo 'debconf shared/accepted-oracle-license-v1-1 select true'
@@ -23,14 +25,14 @@ apt-add-repository ppa:webupd8team/java
 apt-get update
 apt-get install -y oracle-java8-installer
 
-###
+### SBT
 
 echo 'deb https://dl.bintray.com/sbt/debian /' > /etc/apt/sources.list.d/sbt.list
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 apt-get update
 apt-get install -y sbt
 
-###
+### .NET
 
 cat <<'^Z' > /etc/apt/sources.list.d/dotnetdev.list
 deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main
@@ -39,7 +41,7 @@ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
 apt-get update
 apt-get install -y dotnet-dev-1.0.4
 
-###
+### Scala
 
 cd
 mkdir t t/project
